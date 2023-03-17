@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "./Execise2.py", line 77, in <module>
+    table.put(row_key, data)
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/happybase/batch.py", line 92, in put
+    self.send()
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/happybase/batch.py", line 60, in send
+    self._table.connection.client.mutateRows(self._table.name, bms, {})
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/thriftpy2/thrift.py", line 219, in _req
+    return self._recv(_api)
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/thriftpy2/thrift.py", line 231, in _recv
+    fname, mtype, rseqid = self._iprot.read_message_begin()
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 463, in cybin.TCyBinaryProtocol.read_message_begin
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 68, in cybin.read_i32
+  File "thriftpy2/transport/buffered/cybuffered.pyx", line 65, in thriftpy2.transport.buffered.cybuffered.TCyBufferedTransport.c_read
+  File "thriftpy2/transport/buffered/cybuffered.pyx", line 69, in thriftpy2.transport.buffered.cybuffered.TCyBufferedTransport.read_trans
+  File "thriftpy2/transport/cybase.pyx", line 61, in thriftpy2.transport.cybase.TCyBuffer.read_trans
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/thriftpy2/transport/socket.py", line 112, in read
+    buff = self.sock.recv(sz)
+ConnectionResetError: [Errno 104] Connection reset by peer
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "./Execise2.py", line 77, in <module>
+    table.put(row_key, data)
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/happybase/batch.py", line 137, in __exit__
+    self.send()
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/happybase/batch.py", line 60, in send
+    self._table.connection.client.mutateRows(self._table.name, bms, {})
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/thriftpy2/thrift.py", line 216, in _req
+    self._send(_api, **kwargs)
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/thriftpy2/thrift.py", line 226, in _send
+    args.write(self._oprot)
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/thriftpy2/thrift.py", line 163, in write
+    oprot.write_struct(self)
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 511, in cybin.TCyBinaryProtocol.write_struct
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 508, in cybin.TCyBinaryProtocol.write_struct
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 231, in cybin.write_struct
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 390, in cybin.c_write_val
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 126, in cybin.write_list
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 396, in cybin.c_write_val
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 231, in cybin.write_struct
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 390, in cybin.c_write_val
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 126, in cybin.write_list
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 396, in cybin.c_write_val
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 231, in cybin.write_struct
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 379, in cybin.c_write_val
+  File "thriftpy2/protocol/cybin/cybin.pyx", line 133, in cybin.write_string
+  File "thriftpy2/transport/buffered/cybuffered.pyx", line 55, in thriftpy2.transport.buffered.cybuffered.TCyBufferedTransport.c_write
+  File "thriftpy2/transport/buffered/cybuffered.pyx", line 84, in thriftpy2.transport.buffered.cybuffered.TCyBufferedTransport.c_dump_wbuf
+  File "/home/alumnos/mbd30/.local/lib/python3.8/site-packages/thriftpy2/transport/socket.py", line 136, in write
+    self.sock.sendall(buff)
+BrokenPipeError: [Errno 32] Broken pipe
