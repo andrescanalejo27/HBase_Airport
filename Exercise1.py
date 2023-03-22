@@ -6,8 +6,10 @@ import csv
 
 
 def getConn():
-    return happybase.Connection(host='localhost')
+    return happybase.Connection(host='localhost', port=9090)
+
 connection=getConn()
+
 #Si al conectar da el error -> thriftpy2.transport.base.TTransportException: TTransportException(type=1, message="Could not connect to ('0.0.0.0', 9090)")
 #ejecutar en una terminal: hbase thrift start -p 9090
 
