@@ -30,11 +30,11 @@ def to_bytes(string):
 column_families = {
     'datos': dict()
 }
-#connection.create_table(table_name, column_families)
+connection.create_table(table_name, column_families)
 print(f'Tabla {table_name} creada en el namespace mbd10_30')
 # Ruta del archivo CSV
 csv_file = '/tmp/nosql/airData/2007.csv'
-
+count=0
 # Abrir el archivo CSV y leerlo con csv.reader
 with open(csv_file, 'r') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -43,10 +43,9 @@ with open(csv_file, 'r') as csvfile:
     next(csvreader)
 
     # Para cada línea en el archivo CSV, insertar un registro en la tabla HBase
-    with connection.table(table_name).batch(batch_size=100) as table:
+    with connection.table(table_name).batch(batch_size=1000) as table:
         for row in csvreader:
-            
-            row_key = to_bytes(row[16]+'-'+row[17])#+'_'+row[0]+row[1].zfill(2)+row[2].zfill(2)+row[4]
+            row_key = to_bytes(row[16]+'-'+row[17]+'_'+str(count))#+'_'+row[0]+row[1].zfill(2)+row[2].zfill(2)+row[4]
 
             data = {
                 #'datos:Year': to_bytes(row[0]),
@@ -82,9 +81,13 @@ with open(csv_file, 'r') as csvfile:
 
             # Insertar el registro en la tabla HBase
             table.put(row_key, data)
+            count=count+1
+            if count in arr:
+                print(count)
 
 csv_file = '/tmp/nosql/airData/2008.csv'
-
+count=0
+print("Siguiente tabla")
 # Abrir el archivo CSV y leerlo con csv.reader
 with open(csv_file, 'r') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -93,10 +96,11 @@ with open(csv_file, 'r') as csvfile:
     next(csvreader)
 
     # Para cada línea en el archivo CSV, insertar un registro en la tabla HBase
-    with connection.table(table_name).batch(batch_size=100) as table:
+    with connection.table(table_name).batch(batch_size=1000) as table:
+        
         for row in csvreader:
             # La primera columna "Year" se usará como la clave de fila en HBase
-            row_key = to_bytes(row[16]+'-'+row[17]+'_'+row[0]+row[1].zfill(2)+row[2].zfill(2)+row[4])
+            row_key = to_bytes(row[16]+'-'+row[17]+'_'+str(count))
 
             data = {
                 #'datos:Year': to_bytes(row[0]),
@@ -132,3 +136,6 @@ with open(csv_file, 'r') as csvfile:
 
             # Insertar el registro en la tabla HBase
             table.put(row_key, data)
+            count=count+1
+            if count in arr:
+                print(count)

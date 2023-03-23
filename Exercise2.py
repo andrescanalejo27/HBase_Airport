@@ -24,7 +24,7 @@ def to_bytes(string):
 
 # Ruta del archivo CSV
 csv_file = '/tmp/nosql/airData/2007.csv'
-
+arr = [1000000*i for i in range(1, 11)]
 # Abrir el archivo CSV y leerlo con csv.reader
 with open(csv_file, 'r') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -34,9 +34,10 @@ with open(csv_file, 'r') as csvfile:
 
     # Para cada línea en el archivo CSV, insertar un registro en la tabla HBase
     with connection.table(table_name).batch(batch_size=1000) as table:
+        count=0
         for row in csvreader:
             # La primera columna "Year" se usará como la clave de fila en HBase
-            row_key = to_bytes(row[0]+row[1].zfill(2)+row[2].zfill(2)+row[4])
+            row_key = to_bytes(row[0]+row[1].zfill(2)+row[2].zfill(2)+row[4]+'_'+str(count))
 
             # Los datos de cada columna se almacenarán en la familia de columnas "info"
             # Consulta de vuelos por mes o día: Posibilidad de obtener los vuelos de aun día o mes específico (YYYYMMDD o YYYYMM)
@@ -76,6 +77,12 @@ with open(csv_file, 'r') as csvfile:
 
             # Insertar el registro en la tabla HBase
             table.put(row_key, data)
+            count=count+1
+            if count in arr:
+                print(count)
+
+print("Siguiente tabla")
+
 csv_file2='/tmp/nosql/airData/2008.csv'
 with open(csv_file2, 'r') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -85,9 +92,10 @@ with open(csv_file2, 'r') as csvfile:
 
     # Para cada línea en el archivo CSV, insertar un registro en la tabla HBase
     with connection.table(table_name).batch(batch_size=1000) as table:
+        count=0
         for row in csvreader:
             # La primera columna "Year" se usará como la clave de fila en HBase
-            row_key = to_bytes(row[0]+row[1].zfill(2)+row[2].zfill(2)+row[4])
+            row_key = to_bytes(row[0]+row[1].zfill(2)+row[2].zfill(2)+row[4]+'_'+str(count))
 
             # Los datos de cada columna se almacenarán en la familia de columnas "info"
             data = {
@@ -124,3 +132,6 @@ with open(csv_file2, 'r') as csvfile:
 
             # Insertar el registro en la tabla HBase
             table.put(row_key, data)
+            count=count+1
+            if count in arr:
+                print(count)
