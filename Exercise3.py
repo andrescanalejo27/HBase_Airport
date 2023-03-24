@@ -30,11 +30,12 @@ def to_bytes(string):
 column_families = {
     'datos': dict()
 }
-connection.create_table(table_name, column_families)
+#connection.create_table(table_name, column_families)
 print(f'Tabla {table_name} creada en el namespace mbd10_30')
 # Ruta del archivo CSV
 csv_file = '/tmp/nosql/airData/2007.csv'
 count=0
+arr = [1000000*i for i in range(1, 11)]
 # Abrir el archivo CSV y leerlo con csv.reader
 with open(csv_file, 'r') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -139,3 +140,4 @@ with open(csv_file, 'r') as csvfile:
             count=count+1
             if count in arr:
                 print(count)
+connection.close()

@@ -135,3 +135,4 @@ with open(csv_file2, 'r') as csvfile:
             count=count+1
             if count in arr:
                 print(count)
+connection.close()
