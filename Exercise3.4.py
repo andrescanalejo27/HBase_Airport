@@ -1,3 +1,5 @@
+# Como extra sería interesante obtener el modelo de aeronave más usado por la aerolínea para dicha ruta.
+
 import re
 import happybase
 
@@ -13,13 +15,14 @@ def get_duration_avg_for_route(rows, origin, dest):
             aerolineas.append(aero)
         except ValueError:
             pass
-    aerolineas_uniq = list(set(aerolineas))
+    aerolineas_uniq = {aerolinea: aerolineas.count(aerolinea) for aerolinea in set(aerolineas)}
+    aerolineas_ordenadas = dict(sorted(aerolineas_uniq.items(), key=lambda x: x[1], reverse=True))
+    #aerolineas_uniq = list(set(aerolineas))
     aero_info=[]
-    for aerolinea in aerolineas_uniq:
+    for aerolinea, frecuencia in aerolineas_ordenadas.items():
         llegadas=[]
         salidas=[]
         for key, data in rows:
-            
             try:
                 aero = data[b'datos:NombreAerolinea'].decode('utf-8')
                 aerolineas.append(aero)
@@ -40,9 +43,10 @@ def get_duration_avg_for_route(rows, origin, dest):
         avg_llegadas = sum(llegadas) / len(llegadas)
         avg_salidas = sum(salidas) / len(llegadas)
         datos={
+            'Frecuencia': frecuencia,
             "Aerolinea": aerolinea,
             "AVG_Llegadas_Retaso": avg_llegadas,
-            "AVG_Llegadas_Retraso": avg_salidas
+            "AVG_Salidas_Retraso": avg_salidas
         }
         aero_info.append(datos)
     

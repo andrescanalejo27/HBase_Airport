@@ -63,3 +63,4 @@ else:
         print(f"Duración promedio para la ruta {origin}-{dest}: {avg_duration}")
     else:
         print(f"No hay información de duración para la ruta {origin}-{dest}")
+connection.close()
