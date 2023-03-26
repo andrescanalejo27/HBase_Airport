@@ -1,12 +1,43 @@
 import re
 import happybase
+import argparse
+from Exercise1 import getConn
 
-def getConn():
-    return happybase.Connection(host='localhost')
-def get_duration_avg_for_route(rows, origin, dest):
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--namespace', 
+                    type=str, 
+                    required=True,
+                    help='specify namespace to use')
+
+parser.add_argument('--table', 
+                    type=str,
+                    required=True, 
+                    help='specify table name')
+
+args = parser.parse_args()
+    
+def access_table(conn, table_name):
+    try:
+        table = conn.table(table_name)
+        print(f'Conexion con la tabla {table_name} realizada')
+        return table
+    except Exception as e:
+        print(e)
+
+def get_valid_input(prompt, max_len):
+      while True:
+        user_input = input(prompt).strip()
+        if not re.match("^[a-z]*$", user_input, re.IGNORECASE):
+            print(f"Error! Only letters a-z allowed!")
+        elif len(user_input) > max_len:
+            print(f"Error! Only {max_len} characters allowed!")
+        else:
+            return user_input
+
+def get_duration_avg_for_route(rows):
     # Obtener la duración de todos los vuelos de la ruta
     durations = []
-    print("Search")
     for key, data in rows:
         try:
             duration = int(data[b'datos:Duracion'].decode('utf-8'))
@@ -21,46 +52,39 @@ def get_duration_avg_for_route(rows, origin, dest):
     else:
         return None
 
-# Obtener una conexión a la tabla de HBase
-connection = getConn()
-table_name = 'mbd10_30:origen-destino'
-table = connection.table(table_name)
-print(f'Conexion con la tabla {table_name} realizada en el namespace mbd10_30')
-# Obtener la pareja de origen y destino dada por parámetro
-origin = input("Enter Origin: ")
-if not re.match("^[a-z]*$", origin, re.IGNORECASE):
-    print ("Error! Only letters a-z allowed!")
-    sys.exit()
-elif len(origin) > 4:
-    print ("Error! Only 15 characters allowed!")
-    sys.exit()
+def search_route_duration(conn, table_name):
+    table = access_table(conn, table_name)
 
-print ("Your destiny is :", origin)
-dest = input("Enter Destination: ")
-if not re.match("^[a-z]*$", dest, re.IGNORECASE):
-    print ("Error! Only letters a-z allowed!")
-    sys.exit()
-elif len(dest) > 4:
-    print ("Error! Only 4 characters allowed!")
-    sys.exit()
+    # Get the origin and destination from the user
+    origin = get_valid_input("Enter Origin: ", 3)
+    dest = get_valid_input("Enter Destination: ", 3)
 
-print ("Your destination is:", dest)
-# origin = 'ABE'
-# dest = 'DTW'
+    # Filter the rows that correspond to the desired route
+    row_prefix = f"{origin}-{dest}"
+    print(row_prefix)
+    print("Buscando")
+    rows = table.scan(row_prefix=row_prefix.encode('utf-8'))
+    print("Búsqueda finalizada")
 
-# Filtrar las filas que corresponden a la ruta deseada
-row_prefix = origin+"-"+dest
-print("Comienza la búsqueda")
-rows = table.scan(row_prefix=row_prefix.encode('utf-8'))
-print("Finaliza la búsqueda")
-# Verificar si existen rows que matcheen el prefijo
-if not any(rows):
-    print(f"No hay rows en la tabla con el prefijo {row_prefix}")
-else:
-    # Calcular la duración promedio para la ruta dada
-    avg_duration = get_duration_avg_for_route(rows, origin, dest)
-    if avg_duration is not None:
-        print(f"Duración promedio para la ruta {origin}-{dest}: {avg_duration}")
+    # Check if any rows match the prefix
+    if not any(rows):
+        print(f"No rows in the table match the pair {row_prefix}")
     else:
-        print(f"No hay información de duración para la ruta {origin}-{dest}")
-connection.close()
+        # Calculate the average duration for the route
+        avg_duration = get_duration_avg_for_route(rows)
+        if avg_duration is not None:
+            print(f"Average duration for the route {origin}-{dest}: {avg_duration}")
+        else:
+            print(f"No duration information for the route {origin}-{dest}")
+
+if __name__ == '__main__':
+    conn = getConn('0.0.0.0', args.namespace)
+
+    if conn.transport.is_open():
+        conn.close()
+
+    conn.open()
+
+    search_route_duration(conn, args.table)
+
+    conn.close()
